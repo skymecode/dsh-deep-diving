@@ -24,7 +24,7 @@ export interface DiveSkin {
 }
 
 /** The skin ids the settings card offers; 'random' picks per status row. */
-export const SKIN_CHOICES = ['whale', 'catgirl', 'mermaid', 'random'] as const
+export const SKIN_CHOICES = ['whale', 'dafeiyu', 'catgirl', 'mermaid', 'random'] as const
 
 /** Fallback skin when a stored id is unknown or missing. */
 export const DEFAULT_SKIN_ID = 'whale'
@@ -36,6 +36,26 @@ const WHALE_SVG = '<svg viewBox="0 0 40 32" focusable="false" aria-hidden="true"
   + '<circle fill="#ffffff" cx="10" cy="16.8" r="1.4"/>'
   + '<circle fill="currentColor" cx="10.5" cy="16.9" r="0.7"/>'
   + '<path fill="currentColor" opacity="0.55" d="M8.6 21.2 C10.6 20.4 12.6 20.2 14.2 20.8 C12.4 21.2 10.6 21.6 8.6 21.2 Z"/>'
+  + '</svg>'
+
+const DAFEIYU_SVG = '<svg viewBox="0 0 40 32" focusable="false" aria-hidden="true">'
+  // Chubby blue "big fat fish" (dafeiyu), original simplified rendition
+  // inspired by the dsh-reasoning-effort chibi thumb (HanaAyane, MIT).
+  + '<path fill="currentColor" d="M27 7.6 C28.8 5.2 31.6 6 31 8.8 C30.4 7.6 28.8 7.2 27 7.6 Z"/>'
+  + '<path fill="currentColor" d="M31.8 16.2 C33 14.4 35.2 13.2 37 13.4 C35.2 14.9 34.3 16.4 34.3 18 C34.3 19.6 35.2 21.1 37 22.6 C35.2 22.8 33 21.6 31.8 19.8 Z"/>'
+  + '<path fill="currentColor" d="M7.6 16 C7.6 8.9 13.4 4.6 20.4 4.6 C27.4 4.6 32.4 8.9 32.4 16 C32.4 23.1 27.4 27.4 20.4 27.4 C13.4 27.4 7.6 23.1 7.6 16 Z"/>'
+  + '<path fill="#ffffff" d="M12.8 20.8 C13.6 23.6 16.4 25.8 20.4 25.8 C24.4 25.8 27.2 23.6 28 20.8 C26.2 23.2 23.4 24.6 20.4 24.6 C17.4 24.6 14.6 23.2 12.8 20.8 Z"/>'
+  + '<path fill="currentColor" d="M9 13.2 C6.6 12 5 13.8 5.8 16.2 C6.7 14.6 7.8 13.7 9 13.2 Z"/>'
+  + '<circle fill="#ffffff" cx="14.6" cy="13" r="2.4"/>'
+  + '<circle fill="#1e2b52" cx="15.4" cy="13.3" r="1.25"/>'
+  + '<circle fill="#ffffff" cx="15.9" cy="12.7" r="0.45"/>'
+  + '<circle fill="#ffffff" cx="22.6" cy="13" r="2.4"/>'
+  + '<circle fill="#1e2b52" cx="21.8" cy="13.3" r="1.25"/>'
+  + '<circle fill="#ffffff" cx="21.3" cy="12.7" r="0.45"/>'
+  + '<circle fill="#ff9db3" opacity="0.85" cx="12.2" cy="16.6" r="1.05"/>'
+  + '<circle fill="#ff9db3" opacity="0.85" cx="25" cy="16.6" r="1.05"/>'
+  + '<path fill="none" stroke="#1e2b52" stroke-width="0.9" stroke-linecap="round" d="M17 17.2 Q18.6 18.4 20.2 17.2"/>'
+  + '<path fill="#ffd34d" d="M12 1.6 L12.9 4.4 L15.7 5.3 L12.9 6.2 L12 9 L11.1 6.2 L8.3 5.3 L11.1 4.4 Z"/>'
   + '</svg>'
 
 const CATGIRL_SVG = '<svg viewBox="0 0 40 32" focusable="false" aria-hidden="true">'
@@ -79,6 +99,15 @@ export const SKINS: readonly DiveSkin[] = [
     labelEn: 'Diving deep…',
     accent: '#316ac5',
     svg: WHALE_SVG,
+  },
+  {
+    id: 'dafeiyu',
+    nameZh: '大肥鱼',
+    nameEn: 'Big fat fish',
+    labelZh: '大肥鱼下潜…',
+    labelEn: 'Big fish dive…',
+    accent: '#5060a8',
+    svg: DAFEIYU_SVG,
   },
   {
     id: 'catgirl',

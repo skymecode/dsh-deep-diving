@@ -14,9 +14,13 @@ changes, hot-swappable through the profile mechanism.
 
 - Replaces the ornament ahead of the native "Deep diving..." status row
   (`[data-chat-flow] [role="status"][aria-live="polite"]`).
-- Three bundled skins (placeholder vector art — swap the SVGs in
+- Four bundled skins (placeholder vector art — swap the SVGs in
   `src/client/skins.ts` for real sprites):
   - **whale** — whale-girl dive, DeepSeek blue
+  - **dafeiyu** — the chubby "big fat fish", indigo body with a white belly,
+    blush and a yellow sparkle (original simplified SVG inspired by the
+    chibi thumb of [dsh-reasoning-effort](https://github.com/HanaAyane/dsh-reasoning-effort),
+    MIT)
   - **catgirl** — cat-girl dive, sakura pink
   - **mermaid** — mermaid dive, ocean cyan
 - **random** mode picks a skin per status-row appearance.
@@ -52,7 +56,7 @@ refresh the page after code changes — no reinstall needed.
 | Field | Meaning |
 | --- | --- |
 | Enable plugin | Master switch; off leaves the status row untouched |
-| Skin | whale / catgirl / mermaid / random |
+| Skin | whale / dafeiyu / catgirl / mermaid / random |
 | Ornament size | Height in px (14-40, default 20) |
 | Replace status text | Swap "Deep diving..." for the skin's line (zh/en follows the UI language) |
 

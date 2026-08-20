@@ -13,9 +13,13 @@ DSH Web GUI 状态行的「下潜前奏」皮肤插件。当官方界面显示
 
 - 替换原生 "Deep diving..." 状态行前的装饰
   （`[data-chat-flow] [role="status"][aria-live="polite"]`）。
-- 内置三套皮肤（占位矢量图，替换 `src/client/skins.ts` 里的 SVG 即为
+- 内置四套皮肤（占位矢量图，替换 `src/client/skins.ts` 里的 SVG 即为
   正式美术）：
   - **whale** — 鲸鱼娘下潜，DeepSeek 蓝
+  - **dafeiyu** — 圆滚滚的大肥鱼：靛蓝身体、白肚皮、腮红加黄色星芒
+    （原创简化 SVG，风格致敬
+    [dsh-reasoning-effort](https://github.com/HanaAyane/dsh-reasoning-effort)
+    的 chibi 拇指鱼，MIT）
   - **catgirl** — 猫娘入水，樱花粉
   - **mermaid** — 人鱼入海，海洋青
 - **随机**模式：每次状态行出现随机挑一套。
@@ -50,7 +54,7 @@ dsh plugin --profile web add link:$(pwd)
 | 字段 | 说明 |
 | --- | --- |
 | 启用插件 | 总开关；关闭后完全不触碰状态行 |
-| 皮肤 | 鲸鱼娘下潜 / 猫娘入水 / 人鱼入海 / 随机 |
+| 皮肤 | 鲸鱼娘下潜 / 大肥鱼 / 猫娘入水 / 人鱼入海 / 随机 |
 | 装饰大小 | 装饰高度（像素，14-40，默认 20） |
 | 替换状态文案 | 把 "Deep diving..." 换成皮肤专属文案（中英跟随界面语言） |
 

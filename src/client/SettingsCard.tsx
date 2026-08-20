@@ -82,6 +82,7 @@ export type DeepDiveSkinsCardProps =
 function skinLabelKey(id: string): DeepDiveSkinsKey {
   switch (id) {
     case 'whale': return 'skin.whale'
+    case 'dafeiyu': return 'skin.dafeiyu'
     case 'catgirl': return 'skin.catgirl'
     case 'mermaid': return 'skin.mermaid'
     default: return 'skin.random'
