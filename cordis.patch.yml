@@ -1,0 +1,7 @@
+# dsh-deep-dive-skins bundle patch: inserts its plugin row into the
+# web plugin roster. Install into a dsh profile with
+#   dsh plugin --profile web add link:/Users/jackmojong/dsh-deep-dive-skins
+# or, after publishing, with the npm package name.
+- insert:
+    - id: deep-dive-skins
+      name: 'dsh-deep-dive-skins'
