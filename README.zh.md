@@ -29,7 +29,22 @@ DSH Web GUI 状态行的「下潜前奏」皮肤插件。当官方界面显示
   叠出两层装饰。
 - `prefers-reduced-motion` 时停用动画、保持静态图形。
 
+## 效果预览
+
+![四套下潜前奏皮肤](preview/deep-diving-skins.png)
+
+| 皮肤 | 深色 | 浅色 |
+| --- | --- | --- |
+| 鲸鱼娘下潜 | ![鲸鱼娘深色](preview/whale-dark.png) | ![鲸鱼娘浅色](preview/whale-light.png) |
+| 大肥鱼 | ![大肥鱼深色](preview/dafeiyu-dark.png) | ![大肥鱼浅色](preview/dafeiyu-light.png) |
+| 猫娘入水 | ![猫娘深色](preview/catgirl-dark.png) | ![猫娘浅色](preview/catgirl-light.png) |
+| 人鱼入海 | ![人鱼深色](preview/mermaid-dark.png) | ![人鱼浅色](preview/mermaid-light.png) |
+
+上面的胶囊模拟 DSH 原生状态行：装饰位于 "Deep diving..." 文案之前。
+重新生成截图：`node scripts/build-preview.mjs && node scripts/capture-previews.mjs`。
+
 ## 安装
+
 
 从 npm 安装（发布后）：
 

@@ -31,7 +31,23 @@ changes, hot-swappable through the profile mechanism.
   working-whale checks, so the two plugins never stack.
 - `prefers-reduced-motion` stops the animation and keeps the figure static.
 
+## Screenshots
+
+![All four pre-dive skins](preview/deep-diving-skins.png)
+
+| Skin | Dark | Light |
+| --- | --- | --- |
+| Whale-girl dive | ![whale dark](preview/whale-dark.png) | ![whale light](preview/whale-light.png) |
+| Big fat fish | ![dafeiyu dark](preview/dafeiyu-dark.png) | ![dafeiyu light](preview/dafeiyu-light.png) |
+| Cat-girl dive | ![catgirl dark](preview/catgirl-dark.png) | ![catgirl light](preview/catgirl-light.png) |
+| Mermaid dive | ![mermaid dark](preview/mermaid-dark.png) | ![mermaid light](preview/mermaid-light.png) |
+
+The pill above mirrors the native DSH turn-status row: the ornament sits ahead of
+the "Deep diving..." text. Regenerate the captures with
+`node scripts/build-preview.mjs && node scripts/capture-previews.mjs`.
+
 ## Install
+
 
 From npm once published:
 
