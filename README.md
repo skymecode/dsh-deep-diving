@@ -69,10 +69,10 @@ refresh the page after code changes — no reinstall needed.
 ## Compatibility
 
 The plugin is developed and type-checked against DeepSeek Harness
-`dsh-v0.1.1-rc.1`. Its peer ranges and runtime adapters retain compatibility
-with the `0.1.0-rc.7` / `0.1.0-rc.8` Web GUI line: settings cards use the
-official keyed slot contract and automatically fall back to the legacy
-`webUiSettings` scope binder when present.
+`dsh-v0.1.1-rc.2`. Its peer ranges and runtime adapters retain compatibility
+with `0.1.1-rc.1` and the `0.1.0-rc.7` / `0.1.0-rc.8` Web GUI line: settings
+cards use the official keyed slot contract and automatically fall back to the
+legacy `webUiSettings` scope binder when present.
 
 ## Settings
 

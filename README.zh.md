@@ -65,10 +65,10 @@ dsh plugin --profile web add link:$(pwd)
 
 ## 兼容性
 
-插件以 DeepSeek Harness `dsh-v0.1.1-rc.1` 作为当前开发和类型检查基线，
-同时通过 peer 范围与运行时适配兼容 `0.1.0-rc.7` / `0.1.0-rc.8` Web GUI：
-设置卡片遵循官方 keyed slot 契约，并在旧版 `webUiSettings` 作用域绑定器
-存在时自动回退使用。
+插件以 DeepSeek Harness `dsh-v0.1.1-rc.2` 作为当前开发和类型检查基线，
+同时通过 peer 范围与运行时适配兼容 `0.1.1-rc.1` 及
+`0.1.0-rc.7` / `0.1.0-rc.8` Web GUI：设置卡片遵循官方 keyed slot 契约，
+并在旧版 `webUiSettings` 作用域绑定器存在时自动回退使用。
 
 ## 设置项
 
