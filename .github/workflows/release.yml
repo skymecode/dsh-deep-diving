@@ -32,7 +32,14 @@ jobs:
         run: npm install --global "pnpm@$PNPM_VERSION"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        shell: bash
+        run: |
+          set -o pipefail
+          if pnpm install --frozen-lockfile --ignore-scripts 2>&1 | tee pnpm-install.log; then
+            exit 0
+          fi
+          node -e "const fs = require('node:fs'); const log = fs.readFileSync('pnpm-install.log', 'utf8').slice(-3000); const escaped = log.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A'); console.log('::error file=pnpm-lock.yaml,title=pnpm install failed::' + escaped)"
+          exit 1
 
       - name: Type-check
         run: pnpm typecheck
@@ -64,7 +71,14 @@ jobs:
         run: npm install --global "pnpm@$PNPM_VERSION"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile --ignore-scripts
+        shell: bash
+        run: |
+          set -o pipefail
+          if pnpm install --frozen-lockfile --ignore-scripts 2>&1 | tee pnpm-install.log; then
+            exit 0
+          fi
+          node -e "const fs = require('node:fs'); const log = fs.readFileSync('pnpm-install.log', 'utf8').slice(-3000); const escaped = log.replace(/%/g, '%25').replace(/\r/g, '%0D').replace(/\n/g, '%0A'); console.log('::error file=pnpm-lock.yaml,title=pnpm install failed::' + escaped)"
+          exit 1
 
       - name: Verify tag matches package version
         run: >-
