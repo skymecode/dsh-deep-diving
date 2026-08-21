@@ -32,7 +32,7 @@ jobs:
         run: npm install --global "pnpm@$PNPM_VERSION"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Type-check
         run: pnpm typecheck
@@ -64,7 +64,7 @@ jobs:
         run: npm install --global "pnpm@$PNPM_VERSION"
 
       - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+        run: pnpm install --frozen-lockfile --ignore-scripts
 
       - name: Verify tag matches package version
         run: >-
