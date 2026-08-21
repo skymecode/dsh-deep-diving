@@ -22,7 +22,9 @@ import type {} from '@deepseek-ai/dsh-client-locale/client'
 // holes) and the ctx.settingsScope Context merge.
 import type {} from '@deepseek-ai/dsh-client-ui-conversation/client'
 import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
-import type {} from '@deepseek-ai/dsh-client-ui-slots'
+// Type-only: pulls the keyed settings-card slot declared by the Plugins
+// settings surface in DSH rc.7 and newer.
+import type {} from '@deepseek-ai/dsh-client-ui-settings-plugins/client'
 import { mountDiveSkins } from './ornament.ts'
 import { DeepDiveSkinsCard, DeepDiveSkinsCardController, type DeepDiveSkinsSettings } from './SettingsCard.tsx'
 import { en, zh, type DeepDiveSkinsKey } from './locales.ts'
@@ -32,21 +34,6 @@ declare module '@deepseek-ai/dsh-client-ui-slots' {
     /** deep-dive-skins settings-card copy. */
     'deep-dive-skins': DeepDiveSkinsKey
   }
-
-  interface SlotMap {
-    /**
-     * The official top-level plugin-configuration seat. Spelled here with the
-     * same shape the shell declares, so this package can register without
-     * depending on any sibling UI package.
-     */
-    'settings.plugin.item': { kind: 'list'; scope: 'root'; owner: SettingsPluginItemOwnerProps }
-  }
-}
-
-/** Owner share of a plugin card (the section supplies nothing). */
-export interface SettingsPluginItemOwnerProps {
-  /** Marker field: card owner props are intentionally empty. */
-  children?: never
 }
 
 declare module '@deepseek-ai/cordis' {
@@ -111,8 +98,7 @@ export function apply(ctx: ClientContext): void {
   const controller = new DeepDiveSkinsCardController(settingsScope)
   ctx.slots.inject('settings.plugin.item', () => ctx.slots.register({
     name: 'settings.plugin.item',
-    id: 'deep-dive-skins',
-    order: 135,
+    key: NS,
     locale: NS,
     inject: () => controller.inject(),
   }, DeepDiveSkinsCard))

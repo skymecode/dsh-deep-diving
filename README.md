@@ -48,7 +48,6 @@ the "Deep diving..." text. Regenerate the captures with
 
 ## Install
 
-
 From npm once published:
 
 ```sh
@@ -66,6 +65,14 @@ dsh plugin --profile web add link:$(pwd)
 
 Restart `dsh web` afterwards. In link mode, rebuild (`pnpm build`) and
 refresh the page after code changes — no reinstall needed.
+
+## Compatibility
+
+The plugin is developed and type-checked against DeepSeek Harness
+`dsh-v0.1.1-rc.1`. Its peer ranges and runtime adapters retain compatibility
+with the `0.1.0-rc.7` / `0.1.0-rc.8` Web GUI line: settings cards use the
+official keyed slot contract and automatically fall back to the legacy
+`webUiSettings` scope binder when present.
 
 ## Settings
 
@@ -95,12 +102,13 @@ refresh the page after code changes — no reinstall needed.
 
 ```sh
 pnpm build        # tsc (types) + tsdown (node half + browser bundle)
-pnpm test         # vitest (skin registry + ornament mount)
+pnpm test         # vitest (registration + manifest + UI behavior)
 pnpm typecheck    # type check only
 ```
 
 The browser bundle follows the `window.__ModuleLoader__.load` contract; the
-build preset is vendored from the dsh-web-ui monorepo
+build preset tracks the official lazy-CJS format used by supported DSH releases
+and is vendored from the dsh-web-ui monorepo
 (`build/tsdown.client.ts` + `build/web-platform.ts`, Apache-2.0), and the
 settings card chrome is vendored from `shared/client/settings`.
 

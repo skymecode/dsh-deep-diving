@@ -12,7 +12,7 @@
 
 import { Context } from '@deepseek-ai/cordis'
 import { installSettingsSection, settingsNamespace } from '@deepseek-ai/dsh-settings'
-import z from 'schemastery'
+import z from '@deepseek-ai/schemastery'
 
 /** Stable cordis plugin name (matches cordis.patch.yml insert id). */
 export const name = 'deep-dive-skins'

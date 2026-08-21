@@ -45,7 +45,6 @@ DSH Web GUI 状态行的「下潜前奏」皮肤插件。当官方界面显示
 
 ## 安装
 
-
 从 npm 安装（发布后）：
 
 ```sh
@@ -63,6 +62,13 @@ dsh plugin --profile web add link:$(pwd)
 
 安装后重启 `dsh web`。link 模式下改代码后 `pnpm build` 并刷新页面即可，
 无需重装。
+
+## 兼容性
+
+插件以 DeepSeek Harness `dsh-v0.1.1-rc.1` 作为当前开发和类型检查基线，
+同时通过 peer 范围与运行时适配兼容 `0.1.0-rc.7` / `0.1.0-rc.8` Web GUI：
+设置卡片遵循官方 keyed slot 契约，并在旧版 `webUiSettings` 作用域绑定器
+存在时自动回退使用。
 
 ## 设置项
 
@@ -90,12 +96,13 @@ dsh plugin --profile web add link:$(pwd)
 
 ```sh
 pnpm build        # tsc（类型）+ tsdown（node 半区 + 浏览器 bundle）
-pnpm test         # vitest（皮肤注册表 + 装饰挂载）
+pnpm test         # vitest（注册、清单与 UI 行为）
 pnpm typecheck    # 仅类型检查
 ```
 
-浏览器 bundle 走 `window.__ModuleLoader__.load` 契约；构建预设从
-dsh-web-ui monorepo 复制（`build/tsdown.client.ts` +
+浏览器 bundle 走 `window.__ModuleLoader__.load` 契约；构建预设跟随受支持
+DSH 版本使用的官方 lazy-CJS 格式，并从 dsh-web-ui monorepo 复制
+（`build/tsdown.client.ts` +
 `build/web-platform.ts`，Apache-2.0），设置卡片外壳复制自
 `shared/client/settings`。
 
