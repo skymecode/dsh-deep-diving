@@ -13,15 +13,11 @@ DSH Web GUI 状态行的「下潜前奏」皮肤插件。当官方界面显示
 
 - 替换原生 "Deep diving..." 状态行前的装饰
   （`[data-chat-flow] [role="status"][aria-live="polite"]`）。
-- 内置四套皮肤（占位矢量图，替换 `src/client/skins.ts` 里的 SVG 即为
-  正式美术）：
-  - **whale** — 鲸鱼娘下潜，DeepSeek 蓝
-  - **dafeiyu** — 圆滚滚的大肥鱼：靛蓝身体、白肚皮、腮红加黄色星芒
-    （原创简化 SVG，风格致敬
-    [dsh-reasoning-effort](https://github.com/HanaAyane/dsh-reasoning-effort)
-    的 chibi 拇指鱼，MIT）
-  - **catgirl** — 猫娘入水，樱花粉
-  - **mermaid** — 人鱼入海，海洋青
+- 内置四套精细二次元矢量皮肤：
+  - **whale** — 鲸鱼娘下潜，双马尾、女仆发带与深蓝耳鳍
+  - **dafeiyu** — 大肥鱼：圆滚滚的二次元萌系鲸鱼，星星眼、白肚皮、腮红与黄色星芒
+  - **catgirl** — 猫娘入水，樱花粉猫耳、铃铛项圈与萌系猫嘴
+  - **mermaid** — 人鱼入海，海洋青波浪长发、贝壳发饰与翠绿鱼尾
 - **随机**模式：每次状态行出现随机挑一套。
 - 设置卡片（设置 -> 插件配置）：总开关、皮肤、装饰大小（14-40 px）、
   是否把 "Deep diving..." 替换成每套皮肤专属文案（跟随界面语言）。
@@ -31,9 +27,9 @@ DSH Web GUI 状态行的「下潜前奏」皮肤插件。当官方界面显示
 
 ## 效果预览
 
-![四套下潜前奏皮肤](preview/deep-diving-skins.png)
+![四套下潜前奏二次元皮肤](preview/deep-diving-skins.png)
 
-| 皮肤 | 深色 | 浅色 |
+| 皮肤 | 深色主题 | 浅色主题 |
 | --- | --- | --- |
 | 鲸鱼娘下潜 | ![鲸鱼娘深色](preview/whale-dark.png) | ![鲸鱼娘浅色](preview/whale-light.png) |
 | 大肥鱼 | ![大肥鱼深色](preview/dafeiyu-dark.png) | ![大肥鱼浅色](preview/dafeiyu-light.png) |

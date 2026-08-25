@@ -23,15 +23,15 @@ const browser = await chromium.launch({
   // expects a newer cache revision than the one present on this machine).
   executablePath: '/Users/jackmojong/Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell',
 })
-const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 2 })
+const page = await browser.newPage({ viewport: { width: 1440, height: 900 }, deviceScaleFactor: 2 })
 await page.emulateMedia({ reducedMotion: 'reduce' })
 await page.goto('file://' + join(ROOT, 'preview/preview.html'))
 await page.waitForSelector('.pill')
 
-// Hero: the whole table.
-await page.locator('table').screenshot({ path: join(ROOT, 'preview/deep-diving-skins.png') })
+// Hero: the whole preview table wrapper.
+await page.locator('.wrap').screenshot({ path: join(ROOT, 'preview/deep-diving-skins.png') })
 
-// Per skin: dark + light pills.
+// Per skin: dark + light pills and individual icon previews.
 for (const skin of SKINS) {
   for (const theme of ['dark', 'light']) {
     const row = page.locator(`[data-preview-row="${skin.id}-${theme}"]`)

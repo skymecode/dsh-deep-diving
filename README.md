@@ -14,15 +14,11 @@ changes, hot-swappable through the profile mechanism.
 
 - Replaces the ornament ahead of the native "Deep diving..." status row
   (`[data-chat-flow] [role="status"][aria-live="polite"]`).
-- Four bundled skins (placeholder vector art — swap the SVGs in
-  `src/client/skins.ts` for real sprites):
-  - **whale** — whale-girl dive, DeepSeek blue
-  - **dafeiyu** — the chubby "big fat fish", indigo body with a white belly,
-    blush and a yellow sparkle (original simplified SVG inspired by the
-    chibi thumb of [dsh-reasoning-effort](https://github.com/HanaAyane/dsh-reasoning-effort),
-    MIT)
-  - **catgirl** — cat-girl dive, sakura pink
-  - **mermaid** — mermaid dive, ocean cyan
+- Four bundled anime skins with dedicated vector artwork:
+  - **whale** — whale-girl dive (鲸鱼娘), anime blue twintails & maid headdress
+  - **dafeiyu** — the chubby anime "big fat fish" (大肥鱼), sparkly anime eyes, indigo whale body, white belly & blush
+  - **catgirl** — cat-girl dive (猫娘), sakura pink cat ears, ribbon collar & bell
+  - **mermaid** — mermaid dive (人鱼), ocean cyan waves, shell top & emerald fish tail
 - **random** mode picks a skin per status-row appearance.
 - Settings card (Settings -> plugin configuration): master switch, skin,
   ornament size (14-40 px), and optional status-text replacement
@@ -33,14 +29,14 @@ changes, hot-swappable through the profile mechanism.
 
 ## Screenshots
 
-![All four pre-dive skins](preview/deep-diving-skins.png)
+![All four pre-dive anime skins](preview/deep-diving-skins.png)
 
-| Skin | Dark | Light |
+| Skin | Dark Theme | Light Theme |
 | --- | --- | --- |
-| Whale-girl dive | ![whale dark](preview/whale-dark.png) | ![whale light](preview/whale-light.png) |
-| Big fat fish | ![dafeiyu dark](preview/dafeiyu-dark.png) | ![dafeiyu light](preview/dafeiyu-light.png) |
-| Cat-girl dive | ![catgirl dark](preview/catgirl-dark.png) | ![catgirl light](preview/catgirl-light.png) |
-| Mermaid dive | ![mermaid dark](preview/mermaid-dark.png) | ![mermaid light](preview/mermaid-light.png) |
+| Whale-girl dive (鲸鱼娘) | ![whale dark](preview/whale-dark.png) | ![whale light](preview/whale-light.png) |
+| Big fat fish (大肥鱼) | ![dafeiyu dark](preview/dafeiyu-dark.png) | ![dafeiyu light](preview/dafeiyu-light.png) |
+| Cat-girl dive (猫娘) | ![catgirl dark](preview/catgirl-dark.png) | ![catgirl light](preview/catgirl-light.png) |
+| Mermaid dive (人鱼) | ![mermaid dark](preview/mermaid-dark.png) | ![mermaid light](preview/mermaid-light.png) |
 
 The pill above mirrors the native DSH turn-status row: the ornament sits ahead of
 the "Deep diving..." text. Regenerate the captures with

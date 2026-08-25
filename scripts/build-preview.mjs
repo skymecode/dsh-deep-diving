@@ -17,7 +17,7 @@ await mkdir(join(ROOT, 'preview'), { recursive: true })
 const rows = SKINS.map((skin) => {
   const ornament = [
     '<span class="ornament live" aria-hidden="true"',
-    ` style="--dds-size:20px;color:${skin.accent}"`,
+    ` style="--dds-size:24px;color:${skin.accent}"`,
     '>',
     '<span class="figure">',
     skin.svg,
@@ -27,9 +27,13 @@ const rows = SKINS.map((skin) => {
   ].join('')
   const pillDark = `<div class="pill" data-preview-row="${skin.id}-dark"><span class="dot" style="background:${skin.accent}"></span>${ornament}<span class="text">Deep diving...</span></div>`
   const pillLight = `<div class="pill light" data-preview-row="${skin.id}-light"><span class="dot" style="background:${skin.accent}"></span>${ornament}<span class="text">Deep diving...</span></div>`
+  const badgeDark = `<div class="icon-card dark" data-preview-icon="${skin.id}-dark"><span class="icon-avatar" style="color:${skin.accent}">${skin.svg}</span></div>`
+  const badgeLight = `<div class="icon-card light" data-preview-icon="${skin.id}-light"><span class="icon-avatar" style="color:${skin.accent}">${skin.svg}</span></div>`
   return `<tr>
-    <td class="name">${skin.nameZh}<br/><small>${skin.nameEn}</small></td>
+    <td class="name"><div class="name-box"><span class="name-title">${skin.nameZh}</span><span class="name-sub">${skin.nameEn}</span></div></td>
+    <td class="cell icon-cell dark">${badgeDark}</td>
     <td class="cell dark">${pillDark}</td>
+    <td class="cell icon-cell light">${badgeLight}</td>
     <td class="cell light">${pillLight}</td>
   </tr>`
 }).join('\n')
@@ -42,33 +46,55 @@ const html = `<!doctype html>
 <style>
   :root { color-scheme: light dark; }
   * { box-sizing: border-box; }
-  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; background: #10131a; color: #e8eaed; }
-  .wrap { max-width: 1080px; margin: 0 auto; padding: 40px 32px; }
-  h1 { font-size: 22px; margin: 0 0 6px; }
-  p.sub { color: #9aa3b2; margin: 0 0 28px; font-size: 14px; }
-  table { border-collapse: separate; border-spacing: 0 12px; width: 100%; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "PingFang SC", "Microsoft YaHei", sans-serif; background: #0e1117; color: #f0f3f6; }
+  .wrap { max-width: 1100px; margin: 0 auto; padding: 48px 36px; }
+  .hero-header { display: flex; align-items: baseline; justify-content: space-between; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 16px; margin-bottom: 24px; }
+  h1 { font-size: 24px; font-weight: 600; margin: 0; letter-spacing: -0.02em; }
+  p.sub { color: #8b949e; margin: 0; font-size: 14px; }
+  table { border-collapse: separate; border-spacing: 0 14px; width: 100%; }
+  th { text-align: left; font-size: 12px; font-weight: 600; letter-spacing: 0.04em; padding: 0 16px 8px; color: #8b949e; }
   td { vertical-align: middle; }
-  td.name { width: 180px; font-size: 15px; line-height: 1.5; padding-right: 20px; }
-  td.name small { color: #9aa3b2; }
-  td.cell { border-radius: 14px; padding: 18px 20px; }
-  td.cell.dark { background: linear-gradient(180deg, #1b2029, #151a22); box-shadow: inset 0 0 0 1px #2a3140; }
-  td.cell.light { background: linear-gradient(180deg, #fbfcfe, #f0f2f6); box-shadow: inset 0 0 0 1px #dfe3ea; }
-  .pill { display: inline-flex; align-items: center; gap: 8px; border-radius: 999px; padding: 7px 14px 7px 10px; font-size: 13px; }
-  .cell.dark .pill { background: rgba(255,255,255,0.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12); color: #e8eaed; }
-  .cell.light .pill { background: rgba(255,255,255,0.9); box-shadow: inset 0 0 0 1px rgba(20,30,50,0.12); color: #2b2f36; }
-  .dot { width: 6px; height: 6px; border-radius: 50%; flex: none; opacity: 0.9; }
+  td.name { width: 160px; padding-right: 16px; }
+  .name-box { display: flex; flex-direction: column; gap: 3px; }
+  .name-title { font-size: 15px; font-weight: 600; color: #e6edf3; }
+  .name-sub { font-size: 12px; color: #7d8590; }
+  td.cell { padding: 14px 18px; }
+  td.cell.dark { background: #161b22; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.08); }
+  td.cell.light { background: #ffffff; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.08); }
+  td.cell:first-of-type { border-top-left-radius: 12px; border-bottom-left-radius: 12px; }
+  td.cell:last-of-type { border-top-right-radius: 12px; border-bottom-right-radius: 12px; }
+  .icon-cell { width: 68px; padding: 10px 14px !important; }
+  .icon-card { display: flex; align-items: center; justify-content: center; width: 44px; height: 44px; border-radius: 10px; }
+  .icon-card.dark { background: rgba(255,255,255,0.05); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1); }
+  .icon-card.light { background: #f6f8fa; box-shadow: inset 0 0 0 1px rgba(0,0,0,0.06); }
+  .icon-avatar { display: inline-flex; width: 36px; height: 36px; }
+  .icon-avatar svg { width: 100%; height: 100%; }
+  .pill { display: inline-flex; align-items: center; gap: 10px; border-radius: 999px; padding: 8px 18px 8px 14px; font-size: 14px; font-weight: 500; }
+  .cell.dark .pill { background: rgba(255,255,255,0.06); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.12); color: #f0f6fc; }
+  .cell.light .pill { background: #f6f8fa; box-shadow: inset 0 0 0 1px rgba(31,35,40,0.12); color: #1f2328; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex: none; }
   .text { white-space: nowrap; }
-  .ornament { --dds-size: 20px; }
+  .ornament { --dds-size: 24px; }
 </style>
 <link rel="stylesheet" href="../src/client/ornament.module.css"/>
 </head>
 <body>
 <div class="wrap">
-  <h1>dsh-deep-dive-skins</h1>
-  <p class="sub">Pre-deep-dive ornaments on the DSH turn-status row (dark / light)</p>
+  <div class="hero-header">
+    <h1>dsh-deep-dive-skins</h1>
+    <p class="sub">Pre-deep-dive anime icons and status row preview</p>
+  </div>
   <table>
-    <tr><th></th><th class="dark" style="color:#9aa3b2;text-align:left;font-size:12px;padding-left:20px">DARK</th><th class="light" style="color:#2b2f36;text-align:left;font-size:12px;padding-left:20px">LIGHT</th></tr>
+    <thead>
+      <tr>
+        <th>SKIN</th>
+        <th colspan="2" style="padding-left:18px">DARK THEME</th>
+        <th colspan="2" style="padding-left:18px">LIGHT THEME</th>
+      </tr>
+    </thead>
+    <tbody>
 ${rows}
+    </tbody>
   </table>
 </div>
 </body>
