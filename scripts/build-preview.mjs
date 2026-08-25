@@ -14,15 +14,13 @@ const ROOT = join(HERE, '..')
 const css = await readFile(join(ROOT, 'src/client/ornament.module.css'), 'utf8')
 await mkdir(join(ROOT, 'preview'), { recursive: true })
 
-const svgOf = (svg) => svg.replace(/</g, '&lt;').replace(/>/g, '&gt;')
-
 const rows = SKINS.map((skin) => {
   const ornament = [
     '<span class="ornament live" aria-hidden="true"',
     ` style="--dds-size:20px;color:${skin.accent}"`,
     '>',
     '<span class="figure">',
-    svgOf(skin.svg),
+    skin.svg,
     '</span>',
     '<i class="bubble b1"></i><i class="bubble b2"></i><i class="bubble b3"></i>',
     '</span>',

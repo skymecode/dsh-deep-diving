@@ -21,7 +21,7 @@ await mkdir(join(ROOT, 'preview'), { recursive: true })
 const browser = await chromium.launch({
   // Use the locally installed headless shell (playwright 1.62 in dsh-web-ui
   // expects a newer cache revision than the one present on this machine).
-  executablePath: '/Users/jackmojong/Library/Caches/ms-playwright/chromium_headless_shell-1228/chrome-headless-shell-mac-arm64/chrome-headless-shell',
+  executablePath: '/Users/jackmojong/Library/Caches/ms-playwright/chromium_headless_shell-1234/chrome-headless-shell-mac-arm64/chrome-headless-shell',
 })
 const page = await browser.newPage({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 2 })
 await page.emulateMedia({ reducedMotion: 'reduce' })
