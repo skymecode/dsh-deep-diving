@@ -4,3 +4,7 @@ declare module '*.module.css' {
 }
 
 declare module '*.css'
+declare module '*.webp?inline' {
+  const url: string
+  export default url
+}

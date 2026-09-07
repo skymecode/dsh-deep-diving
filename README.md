@@ -1,123 +1,125 @@
 # dsh-deep-dive-skins
 
-Pre-deep-dive ornaments for the DSH Web GUI turn-status row. When the shell
-shows its "Deep diving..." status, this plugin swaps the little spouting
-whale (or the ornament dsh-pet adds) for a chosen anime skin — whale-girl
-variant, cat-girl or mermaid — with a two-beat choreography: a surface
-prepare bob, then a gentle dive sway with rising bubbles.
+[中文](README.zh.md) · [Releases](https://github.com/skymecode/dsh-deep-diving/releases)
 
-Built as an official DeepSeek Harness cordis bundle: host half registers one
-settings namespace, browser half patches the status row. No dsh source
-changes, hot-swappable through the profile mechanism.
+An animated blue whale maid for the DeepSeek Harness Web GUI's **Deep diving…**
+status row. She thinks, runs, builds a snowman and more, changing actions
+throughout the same turn. Four vector skins remain available.
+
+## Preview
+
+![Eight whale-maid actions on dark and light backgrounds](preview/whale-maid-actions.png)
+
+Real sprite frames, not a browser screenshot. Run `pnpm preview` for a live
+preview with the **release bundle and actual settings card** over a simulated
+Host scope. Start/end a turn, change settings and test plugin unloading there.
 
 ## Features
 
-- Replaces the ornament ahead of the native "Deep diving..." status row
-  (`[data-chat-flow] [role="status"][aria-live="polite"]`).
-- Four bundled anime skins with dedicated vector artwork:
-  - **whale** — whale-girl dive (鲸鱼娘), anime blue twintails & maid headdress
-  - **dafeiyu** — the chubby anime "big fat fish" (大肥鱼), sparkly anime eyes, indigo whale body, white belly & blush
-  - **catgirl** — cat-girl dive (猫娘), sakura pink cat ears, ribbon collar & bell
-  - **mermaid** — mermaid dive (人鱼), ocean cyan waves, shell top & emerald fish tail
-- **random** mode picks a skin per status-row appearance.
-- Settings card (Settings -> plugin configuration): master switch, skin,
-  ornament size (14-40 px), and optional status-text replacement
-  ("Deep diving..." becomes a skin-specific line).
-- Coexists with dsh-pet: the ornament carries the same marker dsh-pet's
-  working-whale checks, so the two plugins never stack.
-- `prefers-reduced-motion` stops the animation and keeps the figure static.
+- Default `whale-maid`: eight transparent, 100-frame animations, 10fps each.
+- Continuous rotation within one turn: think → run → snow → wave → code →
+  bubbles → dance → idle. Default interval: 10 seconds (adjustable to 60).
+- Turn rotation off to loop one action. `random` changes the skin at each
+  interval without repeating the previous skin.
+- Existing `whale`, `dafeiyu`, `catgirl`, and `mermaid` vector skins retained.
+- Live settings: enable/disable, skin, size (14–96px), first action, rotation,
+  interval and optional localized status text.
+- Handles both `Deep diving...` and the current Chinese `深度求索中...` row.
+- Reduced motion stops animation/rotation; hidden tabs pause. Turn completion
+  and unloading clean up timers, observers, listeners and changed text.
+- Reuses dsh-pet's working-whale marker to avoid stacked ornaments, restoring
+  displaced ornaments on disable. No Harness source patch or pet server needed.
+- Sprites are bundled locally: no runtime requests to GitHub/CDNs.
 
-## Screenshots
+## Install / upgrade
 
-![All four pre-dive anime skins](preview/deep-diving-skins.png)
-
-| Skin | Dark Theme | Light Theme |
-| --- | --- | --- |
-| Whale-girl dive (鲸鱼娘) | ![whale dark](preview/whale-dark.png) | ![whale light](preview/whale-light.png) |
-| Big fat fish (大肥鱼) | ![dafeiyu dark](preview/dafeiyu-dark.png) | ![dafeiyu light](preview/dafeiyu-light.png) |
-| Cat-girl dive (猫娘) | ![catgirl dark](preview/catgirl-dark.png) | ![catgirl light](preview/catgirl-light.png) |
-| Mermaid dive (人鱼) | ![mermaid dark](preview/mermaid-dark.png) | ![mermaid light](preview/mermaid-light.png) |
-
-The pill above mirrors the native DSH turn-status row: the ornament sits ahead of
-the "Deep diving..." text. Regenerate the captures with
-`node scripts/build-preview.mjs && node scripts/capture-previews.mjs`.
-
-## Install
-
-From npm once published:
+Install the GitHub Release tarball (npm publication is not required):
 
 ```sh
-dsh plugin --profile web add dsh-deep-dive-skins@latest
+dsh plugin --profile web add https://github.com/skymecode/dsh-deep-diving/releases/download/v0.2.0/dsh-deep-dive-skins-0.2.0.tgz
 ```
 
-From this repository (development):
+Use your own profile name if it is not `web`. Restart `dsh web` and refresh the
+page after upgrading. Existing settings are preserved: choose **Blue whale
+maid**, enable **Continuous rotation**, and set **48–64px** if you previously
+saved a vector skin or a smaller size.
+
+Development install:
 
 ```sh
-git clone <your-repo-url> dsh-deep-dive-skins
-cd dsh-deep-dive-skins
-pnpm install && pnpm build
+git clone https://github.com/skymecode/dsh-deep-diving.git
+cd dsh-deep-diving
+pnpm install --frozen-lockfile
+pnpm build
 dsh plugin --profile web add link:$(pwd)
 ```
 
-Restart `dsh web` afterwards. In link mode, rebuild (`pnpm build`) and
-refresh the page after code changes — no reinstall needed.
-
 ## Compatibility
 
-The plugin is developed and type-checked against DeepSeek Harness
-`dsh-v0.1.1-rc.2`. Its peer ranges and runtime adapters retain compatibility
-with `0.1.1-rc.1` and the `0.1.0-rc.7` / `0.1.0-rc.8` Web GUI line: settings
-cards use the official keyed slot contract and automatically fall back to the
-legacy `webUiSettings` scope binder when present.
+Current SDK/type-check baseline: official
+[`dsh-v0.1.3-alpha.2`](https://github.com/deepseek-ai/deepseek-harness/tree/dsh-v0.1.3-alpha.2),
+the newest tag checked on 2026-09-08. Peer ranges also accept `0.1.2-rc.1`,
+`0.1.1-rc.2`, `0.1.1-rc.1`, `0.1.0-rc.8` and `0.1.0-rc.7`.
+
+- Settings cards register using `key: 'deep-dive-skins'` on
+  `settings.plugin.item`; no list-slot `id`/`order`.
+- No dependency on the removed `dsh-client-runtime` browser module or the
+  removed host `installSettingsSection` / `settingsNamespace` exports.
+- Host registers through `ctx.settings.register`; the client uses the shared
+  scope `set`/`unset` contract with read-back. It does not confuse legacy
+  `{field}` batch operations with modern `{path}` operations.
+- Uses `settingsScope` normally, with the legacy `webUiSettings` binder when
+  installed. Existing settings continue to work; new fields have defaults.
+
+Automated checks exercise the built factory, both binder contracts, the real
+React form, SDK host registration and DOM lifecycle. Host registration/unload
+was also checked with published 0.1.1-rc.2 and 0.1.2-rc.1 provider modules.
+These are not a full
+end-to-end conversation test on every historical Harness version. Browser
+visual QA for this change was unavailable (Tabbit runtime disconnected).
 
 ## Settings
 
-| Field | Meaning |
+| Field | Values / default |
 | --- | --- |
-| Enable plugin | Master switch; off leaves the status row untouched |
-| Skin | whale / dafeiyu / catgirl / mermaid / random |
-| Ornament size | Height in px (14-40, default 20) |
-| Replace status text | Swap "Deep diving..." for the skin's line (zh/en follows the UI language) |
-
-## How it works
-
-- The browser half observes the turn-status row with a MutationObserver and
-  claims the slot dsh-pet's working-whale uses: it removes any existing
-  `[data-dsh-pet-working-whale]` ornament, inserts its own
-  `[data-dsh-deep-dive-skin]` ornament (also marked
-  `data-dsh-pet-working-whale` so dsh-pet skips), and self-heals when React
-  re-renders the row.
-- Each skin is pure data in `src/client/skins.ts`: id, labels, accent color
-  and an inline SVG figure (currentColor).
-- Animation is pure CSS: `dds-prepare` (one bob) then `dds-sway` (infinite
-  dive loop) plus rising bubbles, in `src/client/ornament.module.css`.
-- Settings are read live on every mutation; changing a value applies on the
-  next status-row render.
+| Enable plugin | On |
+| Skin | `whale-maid` / `whale` / `dafeiyu` / `catgirl` / `mermaid` / `random` |
+| Ornament size | 14–96px, default 48 |
+| Starting action | `think` / `run` / `snow` / `wave` / `code` / `bubbles` / `dance` / `idle` |
+| Continuous rotation | On; off still loops the selected animation |
+| Rotation interval | 10–60 seconds, default 10 |
+| Replace status text | Off; when on, follows the UI language |
 
 ## Development
 
 ```sh
-pnpm build        # tsc (types) + tsdown (node half + browser bundle)
-pnpm test         # vitest (registration + manifest + UI behavior)
-pnpm typecheck    # type check only
+pnpm typecheck
+pnpm test          # behavior, settings writes, keyed registration, peer ranges
+pnpm build         # declarations + host ESM + lazy browser factory
+pnpm test:bundle   # shipped bundle + React settings + real Host SDK provider
+pnpm test:assets   # alpha, frame dimensions, animation and size budget
+pnpm preview       # local interactive release-bundle preview
 ```
 
-The browser bundle follows the `window.__ModuleLoader__.load` contract; the
-build preset tracks the official lazy-CJS format used by supported DSH releases
-and is vendored from the dsh-web-ui monorepo
-(`build/tsdown.client.ts` + `build/web-platform.ts`, Apache-2.0), and the
-settings card chrome is vendored from `shared/client/settings`.
+`scripts/import-whale-maid.mjs` reproduces sprites from pinned upstream videos
+(requires ffmpeg with libvpx-vp9 and PNG support; existing outputs are skipped).
+`node scripts/build-asset-preview.mjs` regenerates the frame contact sheet.
+Sprites use CSS `steps(100)` and a single rotation timer per mounted plugin.
+The ~4MB browser factory includes all eight sprites to work with old and new
+loaders without static-asset URL assumptions.
 
-## Roadmap
+## Asset source and licenses
 
-- Real sprite art for each skin (replace the placeholder SVGs).
-- Phase-aware choreography driven by `/api/pet/state` (waiting = surface
-  bob, thinking = dive, review = ascend, done = splash).
-- An asset pack (decoration.json strips) for the pet status bubble, pending
-  dsh-pet decoration-id selection support.
-- Community-plugin index registration (community.json PR) once published.
+The matching blue-haired whale-maid animations were found in
+[`PC2005-cloud/dsh-pet`](https://github.com/PC2005-cloud/dsh-pet/tree/e1ff8c1e4001878cbb80441262d530e16541f138)
+and converted from transparent VP9 videos into compact WebP sprite strips.
+No user-uploaded screenshot is distributed in the plugin.
 
-## License
+**Important: upstream assets allow open-source use but prohibit commercial
+use.** This restriction applies to the bundled whale-maid images and embedded
+copies; they are **not Apache-2.0 assets**. See
+[asset attribution and terms](assets/whale-maid/NOTICE.md) and contact the
+upstream author for commercial permission.
 
-Apache-2.0. Vendored build/card files retain their dsh-web-ui provenance;
-see the file headers and LICENSE.
+Plugin code is Apache-2.0. Vendored build/card files retain their dsh-web-ui
+provenance; see file headers and [LICENSE](LICENSE).

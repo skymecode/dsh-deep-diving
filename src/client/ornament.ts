@@ -1,146 +1,183 @@
-/**
- * Pre-deep-dive ornament mount for the native DSH turn-status row.
- *
- * The official conversation client owns the status text and lifecycle. This
- * helper claims the same slot dsh-pet's working-whale uses — it removes any
- * existing spouting-whale ornament and inserts its own skin ornament ahead
- * of the "Deep diving..." text, then self-heals when React replaces the
- * ornament during a render. Our ornament carries the
- * data-dsh-pet-working-whale marker on purpose: dsh-pet's own decorator
- * checks that marker and skips, so the two plugins never stack.
- * @module dsh-deep-dive-skins/ornament
- */
-
 import css from './ornament.module.css'
-import { SKINS, DEFAULT_SKIN_ID, resolveSkin, randomSkin, type DiveSkin } from './skins.ts'
+import { SKINS, resolveSkin, randomSkin, type DiveSkin } from './skins.ts'
+import { MAID_ACTIONS, MAID_ACTION_IDS, resolveAction, type MaidAction } from './whale-maid.ts'
 
-/** Settings snapshot the ornament reads on every mutation. */
 export interface DiveSkinConfig {
-  /** Master switch; when off the ornament never touches the status row. */
   enabled: boolean
-  /** Stored skin id, or 'random' to pick per status-row appearance. */
   skin: string
-  /** Ornament height in px. */
   size: number
-  /** Replace the 'Deep diving...' text with the skin's label. */
   label: boolean
+  rotate?: boolean
+  interval?: number
+  action?: string
 }
 
-const TURN_STATUS_SELECTOR = '[data-chat-flow] [role="status"][aria-live="polite"]'
-const TURN_STATUS_TEXT = 'Deep diving...'
-const ORNAMENT_SELECTOR = '[data-dsh-deep-dive-skin]'
-const CLAIM_SELECTOR = '[data-dsh-pet-working-whale]'
+const STATUS = '[data-chat-flow] [role="status"][aria-live="polite"]'
+const ORNAMENT = '[data-dsh-deep-dive-skin]'
+// ui-chat owns this row since 0.1.2; older ui-conversation used the same DOM.
+const NATIVE_LABELS = new Set(['Deep diving...', 'Deep diving…', '深度求索中...', '深度求索中…'])
+const OUR_LABELS = new Set(SKINS.flatMap(skin => [skin.labelEn, skin.labelZh]))
 
-/** Every label this plugin may have written; used to re-assert on re-renders. */
-const LABEL_SET = new Set<string>()
-for (const skin of SKINS) {
-  LABEL_SET.add(skin.labelZh)
-  LABEL_SET.add(skin.labelEn)
+interface RowState {
+  skin: DiveSkin
+  action: MaidAction
+  ornament: HTMLElement | undefined
+  original: string
+  labelNode: Text
+  displaced: Element[]
+  choice: string
+  selectedAction: string
+  nextAt: number
+  interval: number
 }
 
-/** The turn status keeps its label in a direct text node beside the clock. */
-function carriesTurnStatusText(element: Element): boolean {
-  return [...element.childNodes].some(node =>
-    node.nodeType === Node.TEXT_NODE && node.textContent?.trim() === TURN_STATUS_TEXT,
+function labelNode(row: Element): Text | undefined {
+  return [...row.childNodes].find((node): node is Text =>
+    node.nodeType === 3 && (NATIVE_LABELS.has(node.textContent?.trim() ?? '') || OUR_LABELS.has(node.textContent?.trim() ?? '')),
   )
 }
 
-/** Direct text nodes this plugin may have relabeled (original or a skin label). */
-function carriesKnownStatusText(element: Element): boolean {
-  return [...element.childNodes].some(node => {
-    if (node.nodeType !== Node.TEXT_NODE) return false
-    const text = node.textContent?.trim() ?? ''
-    return text === TURN_STATUS_TEXT || LABEL_SET.has(text)
-  })
+function bounded(value: number | undefined, fallback: number, min: number, max: number): number {
+  return Number.isFinite(value) ? Math.min(max, Math.max(min, value!)) : fallback
 }
 
-/** Build one ornament span: figure + bubbles, sized and tinted by config. */
-function createOrnament(document: Document, skin: DiveSkin, size: number): HTMLSpanElement {
-  const ornament = document.createElement('span')
-  ornament.className = css.ornament + ' ' + css.live
-  ornament.dataset.dshDeepDiveSkin = ''
-  ornament.dataset.ddsSkin = skin.id
-  ornament.setAttribute('aria-hidden', 'true')
-  // Claim the slot dsh-pet's working-whale decorator guards.
-  ornament.dataset.dshPetWorkingWhale = ''
-  ornament.style.setProperty('--dds-size', size + 'px')
-  ornament.style.color = skin.accent
-
-  const figure = document.createElement('span')
-  figure.className = css.figure
-  // Trusted static markup from this bundle (never user input).
-  figure.innerHTML = skin.svg
-  ornament.appendChild(figure)
-
-  for (const bubbleClass of [css.b1, css.b2, css.b3]) {
-    const bubble = document.createElement('i')
-    bubble.className = css.bubble + ' ' + bubbleClass
-    ornament.appendChild(bubble)
-  }
-  return ornament
+function nextSkin(previous: DiveSkin): DiveSkin {
+  const choices = SKINS.filter(skin => skin.id !== previous.id)
+  return choices[Math.floor(Math.random() * choices.length)]!
 }
 
-/** Apply the skin label to the status text node when enabled. */
-function applyLabel(element: HTMLElement, skin: DiveSkin, enabled: boolean): void {
-  const target = enabled ? (document.documentElement.lang.startsWith('zh') ? skin.labelZh : skin.labelEn) : TURN_STATUS_TEXT
-  for (const node of element.childNodes) {
-    if (node.nodeType !== Node.TEXT_NODE) continue
-    const text = node.textContent?.trim() ?? ''
-    if (text === TURN_STATUS_TEXT || LABEL_SET.has(text)) {
-      node.textContent = target
-      return
+function createOrnament(doc: Document, state: RowState, size: number, paused: boolean): HTMLElement {
+  const span = doc.createElement('span')
+  span.className = css.ornament + ' ' + css.live
+  span.dataset.dshDeepDiveSkin = ''
+  span.dataset.dshPetWorkingWhale = ''
+  span.dataset.ddsSkin = state.skin.id
+  span.dataset.ddsAction = state.action
+  span.setAttribute('aria-hidden', 'true')
+  span.style.setProperty('--dds-size', size + 'px')
+  span.style.color = state.skin.accent
+  const figure = doc.createElement('span')
+  if (state.skin.id === 'whale-maid') {
+    span.classList.add(css.maid)
+    figure.className = css.sprite
+    figure.style.backgroundImage = 'url("' + MAID_ACTIONS[state.action] + '")'
+  } else {
+    figure.className = css.figure
+    figure.innerHTML = state.skin.svg // Only trusted, bundled SVG markup.
+    for (const c of [css.b1, css.b2, css.b3]) {
+      const bubble = doc.createElement('i')
+      bubble.className = css.bubble + ' ' + c
+      span.appendChild(bubble)
     }
   }
+  if (paused) span.dataset.ddsPaused = ''
+  span.appendChild(figure)
+  return span
 }
 
-/** Decorate one status node: remove rivals, insert (or keep) our ornament. */
-function decorate(element: Element, config: DiveSkinConfig, pick: () => DiveSkin): void {
-  if (!(element instanceof HTMLElement)) return
-  if (!element.matches(TURN_STATUS_SELECTOR)) return
-  if (!config.enabled) return
-  if (!carriesTurnStatusText(element) && !carriesKnownStatusText(element)) return
-  if (element.querySelector(ORNAMENT_SELECTOR) !== null) {
-    applyLabel(element, resolveSkin(config.skin), config.label)
-    return
+/** Callable disposer; refresh applies settings immediately without restarting a turn. */
+export interface DiveSkinMount {
+  (): void
+  refresh(): void
+}
+
+export function mountDiveSkins(root: HTMLElement, read: () => DiveSkinConfig): DiveSkinMount {
+  const doc = root.ownerDocument
+  const media = doc.defaultView?.matchMedia?.('(prefers-reduced-motion: reduce)')
+  const rows = new Map<HTMLElement, RowState>()
+  let timer: ReturnType<typeof setTimeout> | undefined
+  let disposed = false
+
+  const restore = (row: HTMLElement, state: RowState): void => {
+    state.ornament?.remove()
+    if (OUR_LABELS.has(state.labelNode.data.trim())) state.labelNode.data = state.original
+    if (root.contains(row) && labelNode(row)) {
+      for (const element of state.displaced) row.prepend(element)
+    }
+    rows.delete(row)
   }
-  // Remove any spouting whale dsh-pet (or a previous run) inserted.
-  for (const claim of element.querySelectorAll(CLAIM_SELECTOR)) claim.remove()
-  const skin = config.skin === 'random' ? pick() : resolveSkin(config.skin)
-  const ornament = createOrnament(element.ownerDocument, skin, config.size)
-  applyLabel(element, skin, config.label)
-  element.insertBefore(ornament, element.firstChild)
-}
 
-/**
- * Mount the pre-dive ornament and return its complete disposer.
- * @param root - page subtree to observe; defaults to the application body.
- * @param read - live settings snapshot (re-read on every mutation).
- */
-export function mountDiveSkins(root: HTMLElement, read: () => DiveSkinConfig): () => void {
-  const pick = (): DiveSkin => randomSkin()
   const scan = (): void => {
-    for (const status of root.querySelectorAll(TURN_STATUS_SELECTOR)) {
-      decorate(status, read(), pick)
-    }
-  }
-  scan()
-
-  const observer = new MutationObserver((records) => {
-    for (const record of records) {
-      if (record.target instanceof Element) decorate(record.target, read(), pick)
-      for (const node of record.addedNodes) {
-        if (!(node instanceof Element)) continue
-        if (node.matches(TURN_STATUS_SELECTOR)) decorate(node, read(), pick)
-        for (const status of node.querySelectorAll(TURN_STATUS_SELECTOR)) {
-          decorate(status, read(), pick)
-        }
-      }
-    }
-  })
-  observer.observe(root, { childList: true, subtree: true })
-
-  return () => {
+    if (disposed) return
+    if (timer !== undefined) clearTimeout(timer)
+    timer = undefined
+    // Ignore our own child/text writes; one external mutation triggers one scan.
     observer.disconnect()
-    for (const ornament of root.querySelectorAll(ORNAMENT_SELECTOR)) ornament.remove()
+    const config = read()
+    const paused = media?.matches === true || doc.hidden
+    const now = Date.now()
+    const interval = bounded(config.interval, 10, 10, 60) * 1000
+    for (const [row, state] of rows) {
+      if (!root.contains(row) || !row.matches(STATUS) || !labelNode(row) || !config.enabled) restore(row, state)
+    }
+    if (config.enabled) for (const row of root.querySelectorAll<HTMLElement>(STATUS)) {
+      const text = labelNode(row)
+      if (!text) continue
+      let state = rows.get(row)
+      if (!state) {
+        state = {
+          skin: config.skin === 'random' ? randomSkin() : resolveSkin(config.skin),
+          action: resolveAction(config.action), ornament: undefined,
+          original: text.data, labelNode: text, displaced: [], choice: config.skin,
+          selectedAction: config.action ?? 'think', nextAt: now + interval, interval,
+        }
+        rows.set(row, state)
+      }
+      // React may replace the text node or switch the UI language mid-turn.
+      if (NATIVE_LABELS.has(text.data.trim())) state.original = text.data
+      state.labelNode = text
+      const action = config.action ?? 'think'
+      if (state.choice !== config.skin || state.selectedAction !== action) {
+        state.choice = config.skin
+        state.selectedAction = action
+        state.skin = config.skin === 'random' ? randomSkin() : resolveSkin(config.skin)
+        state.action = resolveAction(action)
+        state.nextAt = now + interval
+      }
+      if (state.interval !== interval || paused || config.rotate === false) state.nextAt = now + interval
+      state.interval = interval
+      if (!paused && config.rotate !== false && now >= state.nextAt) {
+        if (config.skin === 'random') state.skin = nextSkin(state.skin)
+        state.action = MAID_ACTION_IDS[(MAID_ACTION_IDS.indexOf(state.action) + 1) % MAID_ACTION_IDS.length]!
+        state.nextAt = now + interval
+      }
+      // Reuse the chosen skin, including random mode, until a scheduled change.
+      const previous = state.ornament
+      if (!previous || previous.parentElement !== row || previous.dataset.ddsSkin !== state.skin.id || previous.dataset.ddsAction !== state.action) {
+        previous?.remove()
+        for (const claim of row.querySelectorAll('[data-dsh-pet-working-whale]')) {
+          if (!claim.matches(ORNAMENT)) state.displaced.push(claim)
+          claim.remove()
+        }
+        state.ornament = createOrnament(doc, state, bounded(config.size, 48, 14, 96), paused)
+        row.prepend(state.ornament)
+      }
+      const ornament = state.ornament!
+      ornament.style.setProperty('--dds-size', bounded(config.size, 48, 14, 96) + 'px')
+      ornament.toggleAttribute('data-dds-paused', paused)
+      const target = config.label
+        ? (doc.documentElement.lang.startsWith('zh') ? state.skin.labelZh : state.skin.labelEn)
+        : state.original
+      if (text.data !== target) text.data = target
+    }
+    observer.observe(root, { childList: true, characterData: true, subtree: true })
+    if (rows.size && !paused && config.enabled && config.rotate !== false) {
+      const deadline = Math.min(...[...rows.values()].map(state => state.nextAt))
+      timer = setTimeout(scan, Math.max(1, deadline - Date.now()))
+    }
   }
+  const observer = new MutationObserver(scan)
+  doc.addEventListener('visibilitychange', scan)
+  media?.addEventListener('change', scan)
+  scan()
+  const dispose = (() => {
+    disposed = true
+    observer.disconnect()
+    if (timer !== undefined) clearTimeout(timer)
+    doc.removeEventListener('visibilitychange', scan)
+    media?.removeEventListener('change', scan)
+    for (const [row, state] of rows) restore(row, state)
+  }) as DiveSkinMount
+  dispose.refresh = scan
+  return dispose
 }

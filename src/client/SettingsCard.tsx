@@ -6,22 +6,27 @@
  */
 
 import type { InjectFace, PropsLocale, PropsRuntime } from '@deepseek-ai/dsh-client-ui-slots'
-import type { SettingsScope, SnapshotStore } from '@deepseek-ai/dsh-client-runtime/client'
+import type { SettingsScope } from '@deepseek-ai/dsh-client-ui-settings/client'
+import type { SnapshotStore } from './snapshot-store.ts'
 import { BooleanField, ChoiceField, PluginSettingsCard, ValueField } from './PluginSettingsCard.tsx'
 import { booleanField, CardForm, choiceField, numberField, type CardActions, type CardShell, type FieldState } from './settings-form.ts'
 import { SKINS, SKIN_CHOICES } from './skins.ts'
+import { MAID_ACTION_IDS } from './whale-maid.ts'
 import type { DeepDiveSkinsKey } from './locales.ts'
 
 /** The deep-dive-skins fields this card edits (the namespace full schema). */
 export interface DeepDiveSkinsSettings {
   /** Master switch for the plugin. */
   enabled?: boolean
-  /** Skin id: 'whale' | 'catgirl' | 'mermaid' | 'random'. */
+  /** Registered skin id, or random. */
   skin?: string
   /** Ornament height in px. */
   size?: number
   /** Replace the 'Deep diving...' status text. */
   label?: boolean
+  rotate?: boolean
+  interval?: number
+  action?: string
 }
 
 /** What the deep-dive-skins card renders. */
@@ -30,6 +35,9 @@ export interface DeepDiveSkinsCardState extends CardShell {
   skin: FieldState
   size: FieldState
   label: FieldState
+  rotate: FieldState
+  interval: FieldState
+  action: FieldState
 }
 
 /** The registration-side face the card slot entry injects. */
@@ -50,8 +58,11 @@ export class DeepDiveSkinsCardController {
     this.form = new CardForm(scope, [
       booleanField('enabled'),
       choiceField('skin', [...SKIN_CHOICES]),
-      numberField('size', { integer: true, min: 14 }),
+      numberField('size', { integer: true, min: 14, max: 96 }),
       booleanField('label'),
+      booleanField('rotate'),
+      numberField('interval', { integer: true, min: 10, max: 60 }),
+      choiceField('action', MAID_ACTION_IDS),
     ])
     this.store = this.form.bind(() => this.projection())
   }
@@ -63,6 +74,9 @@ export class DeepDiveSkinsCardController {
       skin: this.form.field('skin'),
       size: this.form.field('size'),
       label: this.form.field('label'),
+      rotate: this.form.field('rotate'),
+      interval: this.form.field('interval'),
+      action: this.form.field('action'),
     }
   }
 
@@ -70,6 +84,8 @@ export class DeepDiveSkinsCardController {
   inject(): DeepDiveSkinsCardFace {
     return { hooks: { deepDiveSkinsCard: this.store }, ...this.form.actions() }
   }
+
+  dispose(): void { this.form.dispose() }
 }
 
 /** Props the renderer binds for the deep-dive-skins card. */
@@ -78,10 +94,11 @@ export type DeepDiveSkinsCardProps =
   & PropsLocale<'deep-dive-skins'>
   & InjectFace<DeepDiveSkinsCardFace>
 
-/** Locale key of one skin choice (whale/catgirl/mermaid/random). */
+/** Locale key of one skin choice. */
 function skinLabelKey(id: string): DeepDiveSkinsKey {
   switch (id) {
     case 'whale': return 'skin.whale'
+    case 'whale-maid': return 'skin.whale-maid'
     case 'dafeiyu': return 'skin.dafeiyu'
     case 'catgirl': return 'skin.catgirl'
     case 'mermaid': return 'skin.mermaid'
@@ -146,6 +163,39 @@ export function DeepDiveSkinsCard(props: DeepDiveSkinsCardProps) {
         {...state.size}
         onEdit={(text) => { props.edit('size', text) }}
         onReset={() => { props.resetField('size') }}
+      />
+      <ChoiceField
+        id="settings-deep-dive-skins-action"
+        label={t('settings.action')}
+        hint={t('settings.actionHint')}
+        inheritLabel={t('settings.inherit')}
+        choices={MAID_ACTION_IDS.map(id => ({ value: id, label: t(`action.${id}`) }))}
+        {...fieldProps}
+        {...state.action}
+        onEdit={(text) => { props.edit('action', text) }}
+        onReset={() => { props.resetField('action') }}
+      />
+      <BooleanField
+        id="settings-deep-dive-skins-rotate"
+        label={t('settings.rotate')}
+        hint={t('settings.rotateHint')}
+        inheritLabel={t('settings.inherit')}
+        onLabel={t('settings.on')}
+        offLabel={t('settings.off')}
+        {...fieldProps}
+        {...state.rotate}
+        onEdit={(text) => { props.edit('rotate', text) }}
+        onReset={() => { props.resetField('rotate') }}
+      />
+      <ValueField
+        id="settings-deep-dive-skins-interval"
+        label={t('settings.interval')}
+        hint={t('settings.intervalHint')}
+        numeric
+        {...fieldProps}
+        {...state.interval}
+        onEdit={(text) => { props.edit('interval', text) }}
+        onReset={() => { props.resetField('interval') }}
       />
       <BooleanField
         id="settings-deep-dive-skins-label"

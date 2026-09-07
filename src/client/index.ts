@@ -10,12 +10,12 @@
  * the next status-row render; toggling the plugin off removes our ornaments
  * and restores whatever the shell or dsh-pet renders.
  *
- * Failure policy: every DOM/runtime wiring failure is logged, never thrown —
- * the web shell fails the whole boot when a plugin apply throws.
  * @module dsh-deep-dive-skins/client
  */
 
-import type { ClientContext, SettingsScope, SettingsScopeSpec } from '@deepseek-ai/dsh-client-runtime/client'
+import type { Context as ClientContext } from '@deepseek-ai/cordis'
+import type { SettingsScope, SettingsScopeSpec } from '@deepseek-ai/dsh-client-ui-settings/client'
+import type {} from '@deepseek-ai/dsh-client-ui-renderer/client'
 // Type-only: pulls the locale plugin's Context merge (ctx.locale).
 import type {} from '@deepseek-ai/dsh-client-locale/client'
 // Type-only: pulls the settings-surface SlotMap merge (the 'settings.*'
@@ -25,7 +25,7 @@ import type {} from '@deepseek-ai/dsh-client-ui-settings/client'
 // Type-only: pulls the keyed settings-card slot declared by the Plugins
 // settings surface in DSH rc.7 and newer.
 import type {} from '@deepseek-ai/dsh-client-ui-settings-plugins/client'
-import { mountDiveSkins } from './ornament.ts'
+import { mountDiveSkins, type DiveSkinMount } from './ornament.ts'
 import { DeepDiveSkinsCard, DeepDiveSkinsCardController, type DeepDiveSkinsSettings } from './SettingsCard.tsx'
 import { en, zh, type DeepDiveSkinsKey } from './locales.ts'
 
@@ -51,7 +51,7 @@ declare module '@deepseek-ai/cordis' {
 export const NS = 'deep-dive-skins' as const
 
 /** Required services: slots for the settings card, settings scope for config, locale for copy. */
-export const inject = ['slots', 'locale', 'connection', 'settingsScope', 'remote']
+export const inject = ['slots', 'locale', 'settingsScope']
 
 /** Apply the browser half. */
 export function apply(ctx: ClientContext): void {
@@ -71,31 +71,44 @@ export function apply(ctx: ClientContext): void {
   }
 
   // The ornament mount: while the plugin is enabled, observe the turn-status
-  // row and swap in the selected skin. Any settings change remounts, which
-  // immediately re-scans the current status row with the new config.
-  let disposeOrnament: (() => void) | undefined
+  // row and swap in the selected skin. Settings refresh existing rows without
+  // restarting the current animation unless the chosen skin/action changes.
+  let disposeOrnament: DiveSkinMount | undefined
   const syncOrnament = (): void => {
     if (enabled() && disposeOrnament === undefined) {
       disposeOrnament = mountDiveSkins(document.body, () => {
         const value = read()
         return {
           enabled: value?.enabled ?? true,
-          skin: value?.skin ?? 'whale',
-          size: value?.size ?? 20,
+          skin: value?.skin ?? 'whale-maid',
+          size: value?.size ?? 48,
           label: value?.label ?? false,
+          rotate: value?.rotate ?? true,
+          interval: value?.interval ?? 10,
+          action: value?.action ?? 'think',
         }
       })
     } else if (!enabled() && disposeOrnament !== undefined) {
       disposeOrnament()
       disposeOrnament = undefined
+    } else {
+      disposeOrnament?.refresh()
     }
   }
-  settingsScope.subscribe(syncOrnament)
-  syncOrnament()
+  ctx.effect(() => {
+    const unsubscribe = settingsScope.subscribe(syncOrnament)
+    syncOrnament()
+    return () => {
+      unsubscribe()
+      disposeOrnament?.()
+      disposeOrnament = undefined
+    }
+  }, 'deep-dive-skins: ornament lifecycle')
 
   // Plugin configuration card: one staged form over the deep-dive-skins
   // namespace, contributed to the official plugin-configuration page.
   const controller = new DeepDiveSkinsCardController(settingsScope)
+  ctx.effect(() => () => controller.dispose(), 'deep-dive-skins: settings form')
   ctx.slots.inject('settings.plugin.item', () => ctx.slots.register({
     name: 'settings.plugin.item',
     key: NS,

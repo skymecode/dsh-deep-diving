@@ -23,11 +23,11 @@ export interface DiveSkin {
   readonly svg: string
 }
 
-/** The skin ids the settings card offers; 'random' picks per status row. */
-export const SKIN_CHOICES = ['whale', 'dafeiyu', 'catgirl', 'mermaid', 'random'] as const
+/** The skin ids the settings card offers; random can rotate during a turn. */
+export const SKIN_CHOICES = ['whale-maid', 'whale', 'dafeiyu', 'catgirl', 'mermaid', 'random'] as const
 
 /** Fallback skin when a stored id is unknown or missing. */
-export const DEFAULT_SKIN_ID = 'whale'
+export const DEFAULT_SKIN_ID = 'whale-maid'
 
 const WHALE_SVG = '<svg viewBox="0 0 40 32" focusable="false" aria-hidden="true">'
   // Anime whale-girl chibi bust: white frilly maid headdress/bonnet, blue anime hair with side twintails,
@@ -225,6 +225,11 @@ const MERMAID_SVG = '<svg viewBox="0 0 40 32" focusable="false" aria-hidden="tru
 
 /** The bundled skins, in settings-card order. */
 export const SKINS: readonly DiveSkin[] = [
+  {
+    id: 'whale-maid', nameZh: '蓝色大肥鱼 · 鲸鱼娘', nameEn: 'Blue whale maid',
+    labelZh: '大肥鱼努力求索中…', labelEn: 'Whale maid is deep diving…',
+    accent: '#6487dc', svg: WHALE_SVG,
+  },
   {
     id: 'whale',
     nameZh: '鲸鱼娘下潜',

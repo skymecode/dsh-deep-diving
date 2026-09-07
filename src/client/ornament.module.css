@@ -19,6 +19,19 @@
   height: 100%;
 }
 
+.figure svg { width: 100%; height: 100%; }
+.maid { height: var(--dds-size); }
+.sprite {
+  width: 100%;
+  height: 100%;
+  background-size: 100% 10000%;
+  background-repeat: repeat-y;
+  animation: dds-frames 10s steps(100) infinite;
+}
+@keyframes dds-frames {
+  from { background-position-y: 0; }
+  to { background-position-y: calc(var(--dds-size) * -100); }
+}
 .live .figure {
   animation:
     dds-prepare 1.1s ease-in-out,
@@ -56,6 +69,11 @@
   bottom: 2%;
   animation-delay: 1.4s;
 }
+
+/* After animation shorthands so their reset cannot unpause a background tab. */
+[data-dds-paused] .sprite,
+[data-dds-paused] .figure,
+[data-dds-paused] .bubble { animation-play-state: paused; }
 
 /* Beat 1: surface prepare — one bob before the dive loop starts. */
 @keyframes dds-prepare {
@@ -110,6 +128,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .sprite { animation: none; background-position-y: 0; }
   .live .figure,
   .bubble {
     animation: none;

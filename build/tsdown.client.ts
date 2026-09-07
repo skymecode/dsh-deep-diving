@@ -257,6 +257,19 @@ function clientConfig(id: string, entry: string): UserConfig {
         )
       },
     }, {
+      name: 'dsh-sprite-inline',
+      resolveId(source: string, importer: string | undefined) {
+        if (!source.endsWith('.webp?inline')) return null
+        return '\0dsh-sprite:' + resolvePath(dirname(importer!), source.slice(0, -7))
+      },
+      async load(id: string) {
+        if (!id.startsWith('\0dsh-sprite:')) return null
+        const path = id.slice('\0dsh-sprite:'.length)
+        this.addWatchFile(path)
+        const bytes = await readFile(path)
+        return `export default ${JSON.stringify('data:image/webp;base64,' + bytes.toString('base64'))}`
+      },
+    }, {
       name: 'dsh-css-modules-inline',
       resolveId(source: string, importer: string | undefined) {
         if (!source.endsWith('.module.css')) return null

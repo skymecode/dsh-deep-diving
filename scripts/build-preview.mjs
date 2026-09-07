@@ -15,20 +15,23 @@ const css = await readFile(join(ROOT, 'src/client/ornament.module.css'), 'utf8')
 await mkdir(join(ROOT, 'preview'), { recursive: true })
 
 const rows = SKINS.map((skin) => {
+  const maid = skin.id === 'whale-maid'
+  const figure = maid
+    ? '<span class="sprite" style="background-image:url(../assets/whale-maid/think.webp)"></span>'
+    : `<span class="figure">${skin.svg}</span>`
   const ornament = [
-    '<span class="ornament live" aria-hidden="true"',
-    ` style="--dds-size:24px;color:${skin.accent}"`,
+    `<span class="ornament live ${maid ? 'maid' : ''}" aria-hidden="true"`,
+    ` style="--dds-size:${maid ? 48 : 24}px;color:${skin.accent}"`,
     '>',
-    '<span class="figure">',
-    skin.svg,
-    '</span>',
+    figure,
     '<i class="bubble b1"></i><i class="bubble b2"></i><i class="bubble b3"></i>',
     '</span>',
   ].join('')
   const pillDark = `<div class="pill" data-preview-row="${skin.id}-dark"><span class="dot" style="background:${skin.accent}"></span>${ornament}<span class="text">Deep diving...</span></div>`
   const pillLight = `<div class="pill light" data-preview-row="${skin.id}-light"><span class="dot" style="background:${skin.accent}"></span>${ornament}<span class="text">Deep diving...</span></div>`
-  const badgeDark = `<div class="icon-card dark" data-preview-icon="${skin.id}-dark"><span class="icon-avatar" style="color:${skin.accent}">${skin.svg}</span></div>`
-  const badgeLight = `<div class="icon-card light" data-preview-icon="${skin.id}-light"><span class="icon-avatar" style="color:${skin.accent}">${skin.svg}</span></div>`
+  const avatar = maid ? `<span class="ornament maid" style="--dds-size:44px">${figure}</span>` : skin.svg
+  const badgeDark = `<div class="icon-card dark" data-preview-icon="${skin.id}-dark"><span class="icon-avatar" style="color:${skin.accent}">${avatar}</span></div>`
+  const badgeLight = `<div class="icon-card light" data-preview-icon="${skin.id}-light"><span class="icon-avatar" style="color:${skin.accent}">${avatar}</span></div>`
   return `<tr>
     <td class="name"><div class="name-box"><span class="name-title">${skin.nameZh}</span><span class="name-sub">${skin.nameEn}</span></div></td>
     <td class="cell icon-cell dark">${badgeDark}</td>
