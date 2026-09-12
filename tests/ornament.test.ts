@@ -39,6 +39,48 @@ afterEach(() => {
 })
 
 describe('mountDiveSkins', () => {
+  it('retains the rc.2 turn clock without restarting rotation on each elapsed tick', async () => {
+    // DSH 0.1.5-rc.2 ChatView/TurnStatus: direct label, then an aria-hidden
+    // clock after 15 seconds. The host updates that child every second.
+    vi.useFakeTimers()
+    const { root, status } = makeStatusRow()
+    const dispose = mountDiveSkins(root, () => config({ skin: 'whale-maid' }))
+    vi.advanceTimersByTime(15_000)
+    const running = status.querySelector<HTMLElement>('[data-dds-action]')!
+    expect(running.dataset.ddsAction).toBe('run')
+    const clock = document.createElement('span')
+    clock.setAttribute('aria-hidden', 'true')
+    status.append(clock)
+    for (let elapsed = 15; elapsed < 20; elapsed++) {
+      clock.textContent = `${elapsed}s`
+      await Promise.resolve()
+      expect(status.querySelector('[data-dds-action]')).toBe(running)
+      vi.advanceTimersByTime(1000)
+    }
+    expect(status.querySelector<HTMLElement>('[data-dds-action]')!.dataset.ddsAction).toBe('snow')
+    expect(status.contains(clock)).toBe(true)
+    dispose()
+    expect(statusText(status)).toBe('Deep diving...')
+    expect(clock.textContent).toBe('19s')
+  })
+
+  it('ignores nested message status and releases the timer when switching conversations', async () => {
+    vi.useFakeTimers()
+    const { root, status } = makeStatusRow()
+    root.insertAdjacentHTML('afterbegin', '<div data-chat-flow-key="tool-1"><div role="status">Retrying</div></div><p>Deep diving...</p>')
+    const dispose = mountDiveSkins(document.body, () => config({ skin: 'whale-maid' }))
+    expect(document.querySelectorAll('[data-dds-skin]')).toHaveLength(1)
+    expect(status.querySelector('[data-dds-skin]')).not.toBeNull()
+    root.remove()
+    await Promise.resolve()
+    expect(vi.getTimerCount()).toBe(0)
+    const next = makeStatusRow()
+    await Promise.resolve()
+    expect(next.status.querySelector<HTMLElement>('[data-dds-action]')!.dataset.ddsAction).toBe('think')
+    expect(vi.getTimerCount()).toBe(1)
+    dispose()
+  })
+
   it('cycles all eight maid actions in the same turn, then loops', () => {
     vi.useFakeTimers()
     const { root, status } = makeStatusRow()

@@ -6,6 +6,7 @@ import { MAID_ACTIONS } from '../src/client/whale-maid'
 import { zh } from '../src/client/locales'
 import css from '../src/client/ornament.module.css'
 import './demo.css'
+import manifest from '../package.json'
 
 const base = { enabled: true, skin: 'whale-maid', size: 48, label: false, rotate: true, interval: 10, action: 'think' }
 let snapshot = { status: 'ready', writable: true, base, user: {}, value: base }
@@ -55,7 +56,7 @@ function App() {
   const [active, setActive] = React.useState(true)
   const [mounted, setMounted] = React.useState(true)
   return <main>
-    <header><span className="eyebrow">DEEP DIVE SKINS · 0.2.0</span><h1>蓝色大肥鱼，陪你一起求索。</h1><p>思考、奔跑、堆雪人……让漫长的 Deep diving 多一点灵动。</p></header>
+    <header><span className="eyebrow">DEEP DIVE SKINS · {manifest.version}</span><h1>蓝色大肥鱼，陪你一起求索。</h1><p>思考、奔跑、堆雪人……让漫长的 Deep diving 多一点灵动。</p></header>
     <section className="stage"><div className="section-heading"><h2>同一轮求索 · 持续变化</h2><span>每 10 秒一个新动作</span></div>
       <div className="themes">
         <div className="sample dark"><small>DARK / ENGLISH</small><div data-chat-flow><div role="status" aria-live="polite">{active ? 'Deep diving...' : 'Done'}<span className="elapsed"> · 12s</span></div></div></div>

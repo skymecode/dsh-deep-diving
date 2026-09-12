@@ -36,7 +36,7 @@ Host scope. Start/end a turn, change settings and test plugin unloading there.
 Install the GitHub Release tarball (npm publication is not required):
 
 ```sh
-dsh plugin --profile web add https://github.com/skymecode/dsh-deep-diving/releases/download/v0.2.0/dsh-deep-dive-skins-0.2.0.tgz
+dsh plugin --profile web add https://github.com/skymecode/dsh-deep-diving/releases/download/v0.2.1/dsh-deep-dive-skins-0.2.1.tgz
 ```
 
 Use your own profile name if it is not `web`. Restart `dsh web` and refresh the
@@ -57,9 +57,11 @@ dsh plugin --profile web add link:$(pwd)
 ## Compatibility
 
 Current SDK/type-check baseline: official
-[`dsh-v0.1.3-alpha.2`](https://github.com/deepseek-ai/deepseek-harness/tree/dsh-v0.1.3-alpha.2),
-the newest tag checked on 2026-09-08. Peer ranges also accept `0.1.2-rc.1`,
-`0.1.1-rc.2`, `0.1.1-rc.1`, `0.1.0-rc.8` and `0.1.0-rc.7`.
+[`dsh-v0.1.5-rc.2`](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.2),
+the newest release checked on 2026-09-13. Peer ranges accept the `0.1.5`
+alpha/RC line, including `0.1.5-rc.1` (the npm `latest` channel at that time),
+and retain `0.1.3-alpha.2`, `0.1.2-rc.1`, `0.1.1-rc.2`, `0.1.1-rc.1`,
+`0.1.0-rc.8` and `0.1.0-rc.7`.
 
 - Settings cards register using `key: 'deep-dive-skins'` on
   `settings.plugin.item`; no list-slot `id`/`order`.
@@ -72,11 +74,14 @@ the newest tag checked on 2026-09-08. Peer ranges also accept `0.1.2-rc.1`,
   installed. Existing settings continue to work; new fields have defaults.
 
 Automated checks exercise the built factory, both binder contracts, the real
-React form, SDK host registration and DOM lifecycle. Host registration/unload
-was also checked with published 0.1.1-rc.2 and 0.1.2-rc.1 provider modules.
-These are not a full
-end-to-end conversation test on every historical Harness version. Browser
-visual QA for this change was unavailable (Tabbit runtime disconnected).
+React form, current SDK host registration and DOM lifecycle. The 28 unit tests
+also check the installed SDK version, the turn's one-second elapsed-clock
+updates and conversation switching. Host registration/unload was rechecked
+with the published 0.1.1-rc.2 provider module.
+
+The release-bundle preview is browser-tested with Tabbit (simulated Host
+storage), including animation, settings and lifecycle behavior. This is not
+a full end-to-end conversation test on every historical Harness version.
 
 ## Settings
 

@@ -35,7 +35,7 @@
 直接安装 GitHub Release 包，无需 npm 发布：
 
 ```sh
-dsh plugin --profile web add https://github.com/skymecode/dsh-deep-diving/releases/download/v0.2.0/dsh-deep-dive-skins-0.2.0.tgz
+dsh plugin --profile web add https://github.com/skymecode/dsh-deep-diving/releases/download/v0.2.1/dsh-deep-dive-skins-0.2.1.tgz
 ```
 
 如果你使用的 profile 不是 `web`，请替换为实际名称。升级后重启 `dsh web`
@@ -56,9 +56,10 @@ dsh plugin --profile web add link:$(pwd)
 ## 兼容性
 
 当前 SDK / 类型检查基线为官方
-[`dsh-v0.1.3-alpha.2`](https://github.com/deepseek-ai/deepseek-harness/tree/dsh-v0.1.3-alpha.2)，
-即 2026-09-08 检查时的最新 tag。peer 范围同时接受 `0.1.2-rc.1`、
-`0.1.1-rc.2`、`0.1.1-rc.1`、`0.1.0-rc.8` 和 `0.1.0-rc.7`。
+[`dsh-v0.1.5-rc.2`](https://github.com/deepseek-ai/deepseek-harness/releases/tag/dsh-v0.1.5-rc.2)，
+即 2026-09-13 检查时的最新发布版。peer 范围接受 `0.1.5` alpha/RC 系列，
+包括当时 npm `latest` 指向的 `0.1.5-rc.1`；同时保留 `0.1.3-alpha.2`、
+`0.1.2-rc.1`、`0.1.1-rc.2`、`0.1.1-rc.1`、`0.1.0-rc.8` 和 `0.1.0-rc.7`。
 
 - 设置槽位仍使用 `key: 'deep-dive-skins'`，不误用列表槽位的 `id/order`。
 - 移除对已拆分的 `dsh-client-runtime` 浏览器模块，以及已移除的 Host
@@ -68,10 +69,12 @@ dsh plugin --profile web add link:$(pwd)
 - 优先使用官方 `settingsScope`；存在旧版 `webUiSettings` 绑定器时兼容回退。
   旧配置保留，新字段有默认值。
 
-自动验证覆盖发布 factory、两套绑定器、真实 React 表单、SDK Host 注册与
-DOM 生命周期；另用已发布的 0.1.1-rc.2、0.1.2-rc.1 provider 模块验证了
-Host 注册和卸载。不代表已对每个历史版本进行完整会话端到端测试。
-本次浏览器视觉验收因 Tabbit 运行时断连未完成。
+自动验证覆盖发布 factory、两套绑定器、真实 React 表单、当前 SDK Host 注册与
+DOM 生命周期。28 项单元测试还覆盖实际安装的 SDK 版本、每秒更新的求索计时器
+以及会话切换；另用已发布的 0.1.1-rc.2 provider 模块重新验证了 Host 注册和卸载。
+
+发布 bundle 的预览页已通过 Tabbit 浏览器验证，覆盖动画、设置与生命周期，
+其中 Host 存储为模拟实现；不代表每个历史 Harness 版本均通过完整会话端到端测试。
 
 ## 设置项
 
